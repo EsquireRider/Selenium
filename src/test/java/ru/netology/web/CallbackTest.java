@@ -14,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CallbackTest {
     private WebDriver driver;
@@ -35,12 +36,23 @@ class CallbackTest {
 
     @Test
     void shouldTestV1() {
-        List<WebElement> elements = driver.findElements(By.className("input__control"));
-        elements.get(0).sendKeys("Тятяев Антон");
-        elements.get(1).sendKeys("+79521234567");
-        driver.findElement(By.className("checkbox__box")).click();
-        driver.findElement(By.className("button")).click();
-        String text = driver.findElement(By.className("order-success")).getText();
-        assertEquals("Ваша заявка успешно отправлена!", text.trim());
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Тятяев Антон");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79521112233");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.cssSelector("[role='button']")).click();
+        WebElement result = driver.findElement(By.cssSelector("[data-test-id='order-success']"));
+        assertTrue(result.isDisplayed());
+        assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", result.getText().trim());
+    }
+
+    @Test
+    void shouldTestV2() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Tyatyaev Anton");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79521112233");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.cssSelector("[role='button']")).click();
+        WebElement result = driver.findElement(By.cssSelector("[class='input__sub']"));
+        assertTrue(result.isDisplayed());
+        assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.", result.getText().trim());
     }
 }
